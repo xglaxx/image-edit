@@ -46,7 +46,7 @@ export default class HttpSource {
    }
    
    async getRadios() {
-      await this.createToken();
+      if (!this.radiosList) await this.createToken();
       return this.radiosList;
    }
    
