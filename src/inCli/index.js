@@ -1,11 +1,13 @@
+import EventEmitter from "events";
 import getMatch from "../inCore/getMatch.js";
-import ArrayRadio from "../inCore/ArrayRadio.js";
+import ArrayRadios from "../inCore/ArrayRadio.js";
 import HttpsPortsSource from "../inPorts/HttpsSource.js";
 import TextProSource from "../TextPro/HttpsSourceCreate.js";
 import PhotooxySource from "../Photooxy/HttpsSourceCreate.js";
 import Ephoto360Source from "../Ephoto360/HttpsSourceCreate.js";
 const httpsportssource = (data) => new HttpsPortsSource({
-   ...data, getMatch, ArrayRadio
+   ...data, getMatch, ArrayRadios,
+   ev: new EventEmitter()
 });
 const TextPro = (arrayText, url, selectRadios = []) => new TextProSource(httpsportssource({ arrayText, url, selectRadios }));
 const Photooxy = (arrayText, url, selectRadios = []) => new PhotooxySource(httpsportssource({ arrayText, url, selectRadios }));

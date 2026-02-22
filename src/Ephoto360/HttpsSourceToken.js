@@ -1,11 +1,13 @@
 import formData from "form-data";
-import HttpSource from "./HttpsSource.js";
-export default class HttpSourceToken extends HttpSource {
+import HttpsSource from "./HttpsSource.js";
+export default class HttpSourceToken extends HttpsSource {
    constructor(data) {
       super(data);
+      Object.assign(this, data);
    }
    
    async renderToken() {
+      this.ev.emit("token.rendered-start", { url: this.url, tag: this.tag });
       const form = new formData();
       const token  = await this.createToken();
       if (!(Array.isArray(this.arrayText) && this.arrayText.length >= 1)) return Promise.reject(new Error("Não foi adicionado nenhum texto."));
@@ -13,6 +15,9 @@ export default class HttpSourceToken extends HttpSource {
       
       for (const txt of this.arrayText) {
          form.append("text[]", txt);
+      }
+      for (const radio in this.radios) {
+         form.append(radio+"[radio]", this.radios[radio]);
       }
       form.append("submit", "GO");
       form.append("token", token);
@@ -36,6 +41,9 @@ export default class HttpSourceToken extends HttpSource {
          if (!token) return Promise.reject({ message: "Não foi criado o token ou encontrado/renderizado.", error: html });
          
          return Promise.resolve({ token: token.replaceAll(`\\`, ""), id });
+      }).catch((error) => {
+         this.ev.emit("token.rendered-error", { url: this.url, tag: this.tag, error });
+         return Promise.reject(error);
       });
    }
 }

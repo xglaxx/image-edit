@@ -73,7 +73,7 @@ function readConsole(text) {
    }
    
    const ep = General(config.arrayText, config.url);
-   await ep.createImage().then((res) => {
+   await ep.getRadios().then((res) => {
       console.log("General:", res);
    });
    process.exit();

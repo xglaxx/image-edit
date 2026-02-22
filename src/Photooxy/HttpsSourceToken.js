@@ -1,12 +1,14 @@
 import formData from "form-data";
 import * as cheerio from "cheerio";
-import HttpSource from "./HttpsSource.js";
-export default class HttpSourceToken extends HttpSource {
+import HttpsSource from "./HttpsSource.js";
+export default class HttpSourceToken extends HttpsSource {
    constructor(data) {
       super(data);
+      Object.assign(this, data);
    }
    
    async renderToken() {
+      this.ev.emit("token.rendered-start", { url: this.url, tag: this.tag });
       const form = new formData();
       const token  = await this.createToken();
       if (!(Array.isArray(this.arrayText) && this.arrayText.length >= 1)) return Promise.reject(new Error("Não foi adicionado nenhum texto."));
@@ -33,7 +35,11 @@ export default class HttpSourceToken extends HttpSource {
          if (!data.id) return Promise.reject({ message: "Não foi criado o id ou encontrado/renderizado.", error: html });
          if (!data.token) return Promise.reject({ message: "Não foi criado o token ou encontrado/renderizado.", error: html });
          
+         this.ev.emit("token.rendered", { url: this.url, tag: this.tag, ...data });
          return Promise.resolve(data);
-      });
+      }).catch((error) => {
+         this.ev.emit("token.rendered-error", { url: this.url, tag: this.tag, error });
+         return Promise.reject(error);
+      }); 
    }
 }

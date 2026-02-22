@@ -1,9 +1,6 @@
-import EventEmitter from "EventEmitter";
-export default class HttpsSource extends EventEmitter {
+export default class HttpsSource {
    constructor(data) {
       if (typeof data !== "object") throw data;
-      
-      super();
       this._configSource(data);
    }
    
@@ -12,6 +9,7 @@ export default class HttpsSource extends EventEmitter {
       if (!Array.isArray(data.selectRadios)) throw data;
       if (!(Array.isArray(data.arrayText) && data.arrayText.length)) throw data;
       
+      this.ev = data.ev;
       this.url = data.url;
       this.arrayText = (data.arrayText || []);
       this.selectRadios = (data.selectRadios || []);

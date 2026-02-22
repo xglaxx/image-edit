@@ -15,7 +15,7 @@ export default class HttpSource {
    async createToken() {
       const jar = new CookieJar();
       const client = wrapper(axios.create({ jar }));
-      this.emit("token.wait", { url: this.url, tag: this.tag });
+      this.ev.emit("token.wait", { url: this.url, tag: this.tag });
       return client.get(this.url, {
          headers: {
             accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -36,10 +36,10 @@ export default class HttpSource {
          this.client = client;
          this.radiosList = this.ArrayRadios.radios($, $('.item-input.select_option_wrapper > label'));
          this.radios = this.ArrayRadios.findRadios(this.selectRadios, this.radiosList);
-         this.emit("token.extracted", this);
+         this.ev.emit("token.extracted", this);
          return Promise.resolve(token);
       }).catch((error) => {
-         this.emit("token.error", { url: this.url, tag: this.tag, error });
+         this.ev.emit("token.error", { url: this.url, tag: this.tag, error });
          return Promise.reject(error);
       });
    }
