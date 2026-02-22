@@ -1,20 +1,19 @@
 import getMatch from "../inCore/getMatch.js";
+import ArrayRadio from "../inCore/ArrayRadio.js";
+import HttpsPortsSource from "../inPorts/HttpsSource.js";
 import TextProSource from "../TextPro/HttpsSourceCreate.js";
 import PhotooxySource from "../Photooxy/HttpsSourceCreate.js";
 import Ephoto360Source from "../Ephoto360/HttpsSourceCreate.js";
-const TextPro = (arrayText, url) => new TextProSource({
-   url, arrayText, getMatch
+const httpsportssource = (data) => new HttpsPortsSource({
+   ...data, getMatch, ArrayRadio
 });
-const Photooxy = (arrayText, url) => new PhotooxySource({
-   url, arrayText, getMatch
-});
-const Ephoto360 = (arrayText, url) => new Ephoto360Source({
-   url, arrayText, getMatch
-});
-const General = (arrayText, url) => {
-   if (/textpro\.me/.test(url)) return TextPro(arrayText, url);
-   if (/photooxy\.com/.test(url)) return Photooxy(arrayText, url);
-   if (/ephoto360\.com/.test(url)) return Ephoto360(arrayText, url);
+const TextPro = (arrayText, url, selectRadios = []) => new TextProSource(httpsportssource({ arrayText, url, selectRadios }));
+const Photooxy = (arrayText, url, selectRadios = []) => new PhotooxySource(httpsportssource({ arrayText, url, selectRadios }));
+const Ephoto360 = (arrayText, url, selectRadios = []) => new Ephoto360Source(httpsportssource({ arrayText, url, selectRadios }));
+const General = (arrayText, url, selectRadios = []) => {
+   if (/textpro\.me/.test(url)) return TextPro(arrayText, url, selectRadios);
+   if (/photooxy\.com/.test(url)) return Photooxy(arrayText, url, selectRadios);
+   if (/ephoto360\.com/.test(url)) return Ephoto360(arrayText, url, selectRadios);
    
    throw new Error("Não existe um scrapper com essa url: "+url);
 };

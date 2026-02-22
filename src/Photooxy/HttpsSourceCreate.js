@@ -1,16 +1,21 @@
 import formData from "form-data";
-import HttpSourceToken from "./HttpsSourceToken.js";
-export default class HttpSourceCreate extends HttpSourceToken {
+import HttpsSourceToken from "./HttpsSourceToken.js";
+export default class HttpSourceCreate extends HttpsSourceToken {
    constructor(data) {
       super(data);
+      this.tag = "photooxy";
    }
    
    async createImage() {
+      this.emit("image.creating", { url: this.url, tag: this.tag });
       const form = new formData();
       const { token, id } = await this.renderToken();
       form.append("id", id);
       for (const txt of this.arrayText) {
          form.append("text[]", txt);
+      }
+      for (const radio in this.radios) {
+         form.append(radio+"[radio]", this.radios[radio]);
       }
       form.append("grecaptcharesponse", '');
       form.append("g-recaptcha-response", '');
@@ -25,12 +30,19 @@ export default class HttpSourceCreate extends HttpSourceToken {
             referer: this.url
          } 
       }).then(({ data }) => {
-         if (!data.success) return Promise.reject(data);
-         
          data.server = "photooxy.com";
+         if (!data.success) {
+            this.emit("image.error", data);
+            return Promise.reject(data);
+         }
+         
          data.url = this.server+data.image;
-         this.client = this.server = this.id = null;
+         this.client = this.server = this.id = this.radios = this.radiosList = null;
+         this.emit("image.complete", data);
          return Promise.resolve(data);
+      }).catch((error) => {
+         this.emit("image.error", { url: this.url, tag: this.tag, error });
+         return Promise.reject(error);
       });
    }
    
