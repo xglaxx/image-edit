@@ -17,6 +17,9 @@ export default class HttpSourceToken extends HttpsSource {
       for (const txt of this.arrayText) {
          form.append("text[]", txt);
       }
+      for (const radio in this.radios) {
+         form.append(radio+"[radio]", this.radios[radio]);
+      }
       form.append("token", token);
       form.append("build_server", this.server);
       form.append("build_server_id", this.id);

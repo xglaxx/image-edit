@@ -74,6 +74,9 @@ function readConsole(text) {
    
    const ep = General(config.arrayText, config.url);
    await ep.getRadios().then((res) => {
+      console.log("Radios:", res.radiosList);
+   });
+   await ep.createImage().then((res) => {
       console.log("General:", res);
    });
    process.exit();
