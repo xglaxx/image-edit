@@ -19,4 +19,4 @@ const General = (arrayText, url, selectRadios = []) => {
    
    throw new Error("Não existe um scrapper com essa url: "+url);
 };
-export { Ephoto360, TextPro, Photooxy, General };
+export default { Ephoto360, TextPro, Photooxy, General };
